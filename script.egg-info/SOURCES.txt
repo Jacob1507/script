@@ -1,0 +1,11 @@
+setup.py
+script/__init__.py
+script/cli.py
+script.egg-info/PKG-INFO
+script.egg-info/SOURCES.txt
+script.egg-info/dependency_links.txt
+script.egg-info/entry_points.txt
+script.egg-info/top_level.txt
+script/commands/__init__.py
+script/commands/group-teams.py
+script/service/__init__.py
