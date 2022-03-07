@@ -20,16 +20,24 @@ def cli(name):
     pages_data = a.combine_pages_data(r)
 
     def display_tallest():
+        msg = "Tallest player: "
         tallest = tallest_player()
-        msg = f"Tallest player: {tallest[0]} {feet_to_meters(tallest[1])} meters"
+        if tallest[0] == " ":
+            msg += "Not found"
+        else:
+            msg += f"{tallest[0]} {feet_to_meters(tallest[1])} meters"
         return msg
 
     def display_heaviest():
         highest_value = highest_attr_value("weight_pounds")
         match_player = player_info("weight_pounds", highest_value)
-
         first_item = next(iter(match_player.items()))
-        msg = f"Heaviest player: {first_item[0]} {pounds_to_kilos(first_item[1])} kg"
+
+        msg = "Heaviest player: "
+        if first_item[0] == " ":
+            msg += "Not found"
+        else:
+            msg += f"{first_item[0]} {pounds_to_kilos(first_item[1])} kg"
         return msg
 
     def tallest_player():
