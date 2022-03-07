@@ -5,4 +5,5 @@
 * pip install --editable .
 * pip install requirements.txt
 
-## Commands
+## Using commands
+script [ command ] [ options ]
