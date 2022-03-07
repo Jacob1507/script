@@ -6,7 +6,7 @@ Create new project, then:
 4. `pip install requirements.txt`
 
 ## Using commands
-Usage: script [ command ] [ options ]
+Usage: `script [ command ] [ options ]`
 
 All possible commands:\
  `group_teams` `players-highest-stats` `players` `teams-stats`
@@ -64,5 +64,31 @@ Parameters:
 
 * `--output`:
     * `json`  - save data in json format
+### group-teams
+```
+C:\project\script> script group-teams
+
+Southeast
+        Atlanta Hawks
+        Charlotte Hornets
+        Miami Heat
+        Orlando Magic
+        Washington Wizards
+Atlantic
+        Boston Celtics
+        Brooklyn Nets
+        New York Knicks
+        Philadelphia 76ers
+        Toronto Raptors
+<rest of groups>
+```
+### players-highest-stats
+```
+C:\project\script> script players-highest-stats
+
+Tallest player: Kristaps Porzingis 2.21 meters
+Heaviest player: Boban Marjanovic 131.54 kg
+
+```
     
 Commands `group-teams` and `players-highest-stats` don't require additional parameters.
