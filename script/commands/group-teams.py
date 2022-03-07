@@ -37,6 +37,6 @@ def main():
     gt.stdout()
 
 
-@click.command()
+@click.command(help="Group teams by division")
 def cli():
     main()
