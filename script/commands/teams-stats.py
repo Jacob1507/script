@@ -64,7 +64,7 @@ class TeamsStats:
         r = requests.get(self.games_url, params=params)
         meta = r.json()["meta"]
 
-        for page in range(1, meta["total_pages"]):
+        for page in range(1, meta["total_pages"]+1):
             params[2][1] = page
             r = requests.get(self.games_url, params=params)
             data = r.json()
