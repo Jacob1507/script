@@ -54,7 +54,6 @@ def player_info(attr, val):
 
     for player in pages_data:
         if player[attr] == val:
-            print(player)
             data[f"{player['first_name']} {player['last_name']}"] = val
     return data
 

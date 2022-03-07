@@ -2,8 +2,8 @@ import requests
 import json
 import click
 
-games = "https://www.balldontlie.io/api/v1/games/"
-teams = "https://www.balldontlie.io/api/v1/teams/"
+games_api_url = "https://www.balldontlie.io/api/v1/games/"
+teams_api_url = "https://www.balldontlie.io/api/v1/teams/"
 
 
 class TeamsStats:
@@ -49,9 +49,9 @@ class TeamsStats:
     def season_games(self):
         season_data = self.season_data()
         all_season_games = []
-        for month in season_data:
-            for game_daily in month["data"]:
-                all_season_games.append(game_daily)
+        for page in season_data:
+            for games in page["data"]:
+                all_season_games.append(games)
         return all_season_games
 
     def season_data(self):
@@ -94,20 +94,20 @@ class TeamsStats:
 
 @click.command()
 @click.option("--season", prompt="", help="Shows team statistics in given season")
-@click.option("--output", prompt="stdout", help="display or save output")
+@click.option("--output", default="stdout", help="display or save output")
 def cli(season, output):
-    ts = TeamsStats(teams, games, season)
+    ts = TeamsStats(teams_api_url, games_api_url, season)
     stats = ts.collect_teams_stats()
 
     if output == "stdout":
         for team in stats:
             print(f"""
-            {team["team_name"]}
-            \twon games as home team: {team["won_games_as_home_team"]}
-            \twon games as visitor team: {team["won_games_as_visitor_team"]}
-            \tlost games as home team: {team["lost_games_as_home_team"]}
-            \tlost games as visitor team: {team["lost_games_as_visitor_team"]}
-            """)
+    {team["team_name"]}
+    \twon games as home team: {team["won_games_as_home_team"]}
+    \twon games as visitor team: {team["won_games_as_visitor_team"]}
+    \tlost games as home team: {team["lost_games_as_home_team"]}
+    \tlost games as visitor team: {team["lost_games_as_visitor_team"]}
+    """)
 
     if output == "json":
         with open("output.json", "w", encoding="utf-8") as f:
