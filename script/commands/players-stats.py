@@ -12,7 +12,7 @@ def cli(name):
         a = API(players_url)
     except Exception as e:
         print(e)
-        print("Player not found")
+        print("Invalid URL")
         sys.exit()
 
     r = a.request_players_data()
