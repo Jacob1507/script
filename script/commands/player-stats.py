@@ -10,9 +10,6 @@ def cli(name):
     url = f"https://www.balldontlie.io/api/v1/players?search={name}"
     r = requests.get(url)
     js = r.json()
-    if name:
-        result = list()
-        for data in js["data"]:
-            if data["first_name"].lower() == name.lower():
-                print(f"{data}\n")
-                result.append(data)
+    for player in js["data"]:
+        if player["first_name"].lower() == name.lower():
+            print(f"{player}")
