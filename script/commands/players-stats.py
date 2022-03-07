@@ -1,6 +1,7 @@
+import sys
 import click
 from script.core import API
-import sys
+
 
 
 @click.command(help="Display tallest and heaviest player")
@@ -17,6 +18,7 @@ def cli(name):
 
     r = a.request_players_data()
     pages_data = a.combine_pages_data(r)
+    print(pages_data)
 
     def display_tallest():
         tallest = tallest_player()
