@@ -1,6 +1,6 @@
 ## How to install
 Create new project, then:
-1. `git clone --branch master ht<span>tps://github.com/Jacob1507/script.git`
+1. `git clone --branch master https://github.com/Jacob1507/script.git`
 2. `cd script`
 3. `pip install --editable .`
 4. `pip install requirements.txt`
