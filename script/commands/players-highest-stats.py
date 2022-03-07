@@ -80,7 +80,7 @@ def pounds_to_kilos(value):
     return round(value * float(0.4535924), 2)
 
 
-@click.command(help="All player data needs to be saved as json file")
+@click.command(help="Display tallest and heaviest player")
 def cli():
     try:
         click.echo(f"{display_tallest()}\n{display_heaviest()}")
