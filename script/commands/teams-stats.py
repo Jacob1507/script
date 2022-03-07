@@ -1,6 +1,7 @@
+import click
 import requests
 import json
-import click
+
 
 games_api_url = "https://www.balldontlie.io/api/v1/games/"
 teams_api_url = "https://www.balldontlie.io/api/v1/teams/"
