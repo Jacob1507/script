@@ -1,2 +1,0 @@
-[console_scripts]
-script = script.cli:cli
