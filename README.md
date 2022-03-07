@@ -3,7 +3,7 @@ Create new project, then:
 1. `git clone --branch master https://github.com/Jacob1507/script.git`
 2. `cd script`
 3. `pip install --editable .`
-4. `pip install requirements.txt`
+4. `pip install -r requirements.txt`
 
 ## Using commands
 Usage: `script [ command ] [ options ]`
