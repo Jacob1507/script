@@ -5,8 +5,6 @@ class API:
     def __init__(self, url):
         self.url = url
 
-        self.file = {}
-
     def get_page_url(self, page=1, per_page=100):
         return self.url + f"?page={page}&per_page={per_page}"
 
