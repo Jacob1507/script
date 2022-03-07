@@ -6,7 +6,7 @@ url = "https://www.balldontlie.io/api/v1/players"
 
 @click.command()
 @click.option("--name", prompt="", help="Search players by name")
-def cli(name, output):
+def cli(name):
     url = f"https://www.balldontlie.io/api/v1/players?search={name}"
     r = requests.get(url)
     js = r.json()
