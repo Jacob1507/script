@@ -1,5 +1,4 @@
 import click
-import json
 import requests
 
 
@@ -26,10 +25,6 @@ class GroupTeams:
             print(division)
             for team in teams:
                 print(f"\t{team}")
-
-    def save_as_json(self):
-        with open("../output.json", "w") as f:
-            json.dump(self.divisions, f)
 
 
 def main():
