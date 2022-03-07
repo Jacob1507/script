@@ -9,7 +9,7 @@ Create new project, then:
 Usage: `script [ command ] [ options ]`
 
 All possible commands:\
- `group_teams` `players-highest-stats` `players` `teams-stats`
+ `group-teams` `players-stats` `teams-stats`
  
 To view possible options use:\
  `script [ command ] --help`
@@ -17,35 +17,10 @@ To view possible options use:\
 
 *please note that commands request API from external source and it might take some time to process all data
 ## Examples
-### players
-
-````
-C:\project\script> script players --help
-
-Usage: script players [OPTIONS]
-
-Options:
-  --name TEXT  Search players by name
-  --help       Show this message and exit.
-
-````
-
-````
-C:\project\script> script players --name michael
-
-
-Michael Smith - Boston Celtics (BOS)
-Michael Ansley - Orlando Magic (ORL)
-Michael Adams - Denver Nuggets (DEN)
-Michael Curry - Philadelphia 76ers (PHI)
-<rest of players>
-````
-
-### teams-stats
-
+### team-stats
 ````
 C:\project\script> script teams-stats --season 2021
-Atlanta Hawks
+    Atlanta Hawks
         won games as home team: 19
         won games as visitor team: 14
         lost games as home team: 24
@@ -82,13 +57,14 @@ Atlantic
         Toronto Raptors
 <rest of groups>
 ```
-### players-highest-stats
+### players-stats
 ```
-C:\project\script> script players-highest-stats
+C:\project\script> script players-stats --name james
 
-Tallest player: Kristaps Porzingis 2.21 meters
-Heaviest player: Boban Marjanovic 131.54 kg
-
+Tallest player: James Johnson 2.03 meters
+Heaviest player: LeBron James 113.4 kg
 ```
-    
-Commands `group-teams` and `players-highest-stats` don't require additional parameters.
+
+Parameters:
+
+* `--name <player name>`
