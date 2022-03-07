@@ -12,6 +12,66 @@ except Exception as e:
     print("URL address might be invalid\n")
     sys.exit()
 
+r = a.request_players_data()
+pages_data = a.combine_pages_data(r)
+
+
+def display_tallest():
+    tallest = tallest_player()
+    msg = f"Tallest player: {tallest[0]} {feet_to_meters(tallest[1])} meters"
+    return msg
+
+
+def display_heaviest():
+    highest_value = highest_attr_value("weight_pounds")
+    match_player = player_info("weight_pounds", highest_value)
+
+    first_item = next(iter(match_player.items()))
+    msg = f"Heaviest player: {first_item[0]} {pounds_to_kilos(first_item[1])} kg"
+    return msg
+
+
+def tallest_player():
+    inches = 0
+    first_name = ""
+    last_name = ""
+    height = 0
+
+    highest_value = highest_attr_value("height_feet")
+    for player in pages_data:
+        if player["height_feet"] == highest_value:
+            tmp_highest_inches = player["height_inches"]
+            if tmp_highest_inches > inches:
+                inches = tmp_highest_inches
+                first_name = player["first_name"]
+                last_name = player["last_name"]
+            height = highest_value + round(inches * float(0.083), 2)
+    return [f"{first_name} {last_name}", height]
+
+
+def player_info(attr, val):
+    data = dict()
+
+    for player in pages_data:
+        if player[attr] == val:
+            print(player)
+            data[f"{player['first_name']} {player['last_name']}"] = val
+    return data
+
+
+def highest_attr_value(attr):
+    highest_val = 0
+    players_data = pages_data
+
+    for player in players_data:
+        attr_value = player[attr]
+        try:
+            if attr_value > highest_val:
+                highest_val = attr_value
+        except TypeError:
+            continue
+    return highest_val
+
 
 def feet_to_meters(value):
     return round(value * float(0.3048), 2)
@@ -21,31 +81,10 @@ def pounds_to_kilos(value):
     return round(value * float(0.4535924), 2)
 
 
-def tallest_player():
-    data = a.check_feet_and_inches()
-    sorted_items = sorted(data.items(), key=lambda x: x[1], reverse=True)
-    tallest = sorted_items[0]
-    feet = 0
-    for i in tallest:
-        if type(i) is float:
-            feet = i
-    msg = f"Tallest player: {tallest[0]} {feet_to_meters(feet)} meters"
-    return msg
-
-
-def heaviest_player():
-    highest_value = a.highest_attr_value("weight_pounds")
-    result = a.player_info("weight_pounds", highest_value)
-
-    first_item = next(iter(result.items()))
-    msg = f"Heaviest player: {first_item[0]} {pounds_to_kilos(first_item[1])} kg"
-    return msg
-
-
 @click.command(help="All player data needs to be saved as json file")
 def cli():
     try:
-        click.echo(f"{tallest_player()}\n{heaviest_player()}")
+        click.echo(f"{display_tallest()}\n{display_heaviest()}")
     except Exception as e:
         print(e)
         print("Invalid data\n")
