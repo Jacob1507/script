@@ -1,34 +1,67 @@
 import requests
+import json
+import csv
+import sqlite3
 
 
-class API:
-    def __init__(self, url):
-        self.url = url
+def request_to_json(url, params):
+    r = requests.get(url, params)
+    data = r.json()
+    return data
 
-    def get_page_url(self, page=1, per_page=100):
-        return self.url + f"?page={page}&per_page={per_page}"
 
-    def request_players_data(self):
-        players_data = list()
-        params = [
-            ("per_page", 100),
-            ["page", 1]
-        ]
-        r = requests.get(self.url, params=params)
-        meta = r.json()["meta"]
-        for page in range(1, meta["total_pages"]+1):
-            params[1][1] = page
-            r = requests.get(self.url, params=params)
-            data = r.json()["data"]
-            players_data.append(data)
-        return players_data
+class Command:
+    def __init__(self, data: list):
+        self.data = data
 
-    @staticmethod
-    def combine_pages_data(data):
-        all_pages_data = []
+    def stdout(self):
+        for item in self.data:
+            print(f"""
+{item["team_name"]}
+\twon games as home team: {item["won_games_as_home_team"]}
+\twon games as visitor team: {item["won_games_as_visitor_team"]}
+\tlost games as home team: {item["lost_games_as_home_team"]}
+\tlost games as visitor team: {item["lost_games_as_visitor_team"]}
+        """)
 
-        for page in data:
-            for items in page:
-                all_pages_data.append(items)
+    def data_to_json(self):
+        with open("output.json", "w", encoding="utf-8") as f:
+            json.dump(self.data, f, indent=2)
 
-        return all_pages_data
+    def data_to_csv(self):
+        header_info = ["team_name", "won_games_as_home_team", "won_games_as_visitor_team",
+                       "lost_games_as_home_team", "lost_games_as_visitor_team"]
+
+        with open("output.csv", "w") as f:
+            writer = csv.DictWriter(f, fieldnames=header_info)
+            writer.writeheader()
+            writer.writerows(self.data)
+
+    def data_do_sqlite(self):
+        data = self.data
+        conn = sqlite3.connect("output.db")
+        db = conn.cursor()
+
+        try:
+            db.execute("""create table teams_stats (
+                         team_name varchar(50),
+                         won_games_as_home_team int,
+                         won_games_as_visitor_team int,
+                         lost_games_as_home_team int,
+                         lost_games_as_visitor_team int
+                       )""")
+        except sqlite3.Error:
+            """ ignores exception if table exists """
+            pass
+
+        for team in data:
+            db.execute(f""" INSERT INTO teams_stats VALUES(?, ?, ?, ?, ?)""", (
+                            team["team_name"],
+                            team["won_games_as_home_team"],
+                            team["won_games_as_visitor_team"],
+                            team["lost_games_as_home_team"],
+                            team["lost_games_as_visitor_team"]
+                        ))
+
+            conn.commit()
+        conn.close()
