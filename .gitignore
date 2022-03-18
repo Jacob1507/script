@@ -2,3 +2,5 @@ venv/
 .idea/
 script.egg-info/
 *.json
+*.csv
+*.db
