@@ -1,17 +1,21 @@
 import click
 import requests
-import json
+
+
+from script.core import Command
 
 
 games_api_url = "https://www.balldontlie.io/api/v1/games/"
 teams_api_url = "https://www.balldontlie.io/api/v1/teams/"
 
 
-class TeamsStats:
+class TeamsStats(Command):
     def __init__(self, teams_url, games_url, season_year):
         self.teams_url = teams_url
         self.games_url = games_url
         self.season_year = season_year
+
+        Command.__init__(self, data=self.collect_teams_stats())
 
     def collect_teams_stats(self):
         list_of_games = self.season_games()
@@ -98,18 +102,15 @@ class TeamsStats:
 @click.option("--output", default="stdout", help="display or save output")
 def cli(season, output):
     ts = TeamsStats(teams_api_url, games_api_url, season)
-    stats = ts.collect_teams_stats()
 
     if output == "stdout":
-        for team in stats:
-            print(f"""
-    {team["team_name"]}
-    \twon games as home team: {team["won_games_as_home_team"]}
-    \twon games as visitor team: {team["won_games_as_visitor_team"]}
-    \tlost games as home team: {team["lost_games_as_home_team"]}
-    \tlost games as visitor team: {team["lost_games_as_visitor_team"]}
-    """)
+        ts.stdout()
 
     if output == "json":
-        with open("output.json", "w", encoding="utf-8") as f:
-            json.dump(stats, f, indent=2)
+        ts.data_to_json()
+
+    if output == "csv":
+        ts.data_to_csv()
+
+    if output == "sqlite":
+        ts.data_do_sqlite()
