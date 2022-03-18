@@ -2,6 +2,9 @@ import click
 import requests
 
 
+URL = "https://www.balldontlie.io/api/v1/teams"
+
+
 class GroupTeams:
     def __init__(self, json_data):
         self.divisions = {}
@@ -27,16 +30,11 @@ class GroupTeams:
                 print(f"\t{team}")
 
 
-def main():
-    url = "https://www.balldontlie.io/api/v1/teams"
-    r = requests.get(url)
-    api = r.json()
-    gt = GroupTeams(api)
+@click.command(help="Group teams by division")
+def cli():
+    r = requests.get(URL)
+    data = r.json()
+    gt = GroupTeams(data)
     gt.get_divisions_dict()
     gt.group_teams()
     gt.stdout()
-
-
-@click.command(help="Group teams by division")
-def cli():
-    main()
