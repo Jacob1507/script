@@ -1,91 +1,87 @@
-import sys
 import click
-from script.core import API
+from script.core import *
 
+URL = f"https://www.balldontlie.io/api/v1/players"
+PAGE = 1
+PER_PAGE = 100
+
+
+class PlayersStats:
+    def __init__(self, data):
+        self.data = data
+
+    def tallest_player(self):
+        tallest_player = {
+            "first_name": "",
+            "last_name": "",
+            "height": 0,
+        }
+        for player in self.data:
+            if player["height_feet"] is not None:
+                total_height = player["height_feet"] + (player["height_inches"] / 10)
+                if total_height >= tallest_player["height"]:
+                    tallest_player["first_name"] = player["first_name"]
+                    tallest_player["last_name"] = player["last_name"]
+                    tallest_player["height"] = total_height
+
+        return tallest_player
+
+    def heaviest_player(self):
+        heaviest_player = {
+            "first_name": "",
+            "last_name": "",
+            "weight": 0,
+        }
+
+        for player in self.data:
+            if player["weight_pounds"] is not None:
+                if player["weight_pounds"] > heaviest_player["weight"]:
+                    tmp = player["weight_pounds"]
+                    heaviest_player["first_name"] = player["first_name"]
+                    heaviest_player["last_name"] = player["last_name"]
+                    heaviest_player["weight"] = tmp
+
+        return heaviest_player
+
+
+def feet_to_meters(feet_height):
+    one_feet_to_meter = float(0.3048)
+    return round(feet_height * one_feet_to_meter, 2)
+
+
+def pounds_to_kilos(pounds_weight):
+    one_pound_to_kilo = float(0.4535924)
+    return round(pounds_weight * one_pound_to_kilo, 2)
 
 
 @click.command(help="Display tallest and heaviest player")
 @click.option("--name", prompt="")
 def cli(name):
-    players_url = f"https://www.balldontlie.io/api/v1/players?search={name}"
+    params = [
+        ["search", name],
+        ["page", PAGE],
+        ["per_page", PER_PAGE],
+    ]
 
-    try:
-        a = API(players_url)
-    except Exception as e:
-        print(e)
-        print("Invalid URL")
-        sys.exit()
+    initial_request = request_to_json(URL, params)
+    total_pages = initial_request["meta"]["total_pages"]
+    data = list()
 
-    r = a.request_players_data()
-    pages_data = a.combine_pages_data(r)
+    if total_pages > 1:
+        for page in range(1, total_pages):
+            params[1][1] = page
+            req_new_page = request_to_json(URL, params)["data"]
+            data.append(req_new_page)
 
-    def display_tallest():
-        msg = "Tallest player: "
-        tallest = tallest_player()
-        if tallest[0] == " ":
-            msg += "Not found"
-        else:
-            msg += f"{tallest[0]} {feet_to_meters(tallest[1])} meters"
-        return msg
+    else:
+        data = initial_request["data"]
 
-    def display_heaviest():
-        highest_value = highest_attr_value("weight_pounds")
-        match_player = player_info("weight_pounds", highest_value)
-        first_item = next(iter(match_player.items()))
+    ps = PlayersStats(data)
 
-        msg = "Heaviest player: "
-        if first_item[0] == " ":
-            msg += "Not found"
-        else:
-            msg += f"{first_item[0]} {pounds_to_kilos(first_item[1])} kg"
-        return msg
+    heaviest = ps.heaviest_player()
+    tallest = ps.tallest_player()
 
-    def tallest_player():
-        inches = 0
-        first_name = ""
-        last_name = ""
-        height = 0
-
-        highest_value = highest_attr_value("height_feet")
-        for player in pages_data:
-            if player["height_feet"] == highest_value:
-                tmp_highest_inches = player["height_inches"]
-                if tmp_highest_inches > inches:
-                    inches = tmp_highest_inches
-                    first_name = player["first_name"]
-                    last_name = player["last_name"]
-                height = highest_value + round(inches * float(0.083), 2)
-        return [f"{first_name} {last_name}", height]
-
-    def player_info(attr, val):
-        data = dict()
-
-        for player in pages_data:
-            if player[attr] == val:
-                data[f"{player['first_name']} {player['last_name']}"] = val
-        return data
-
-    def highest_attr_value(attr):
-        highest_val = 0
-        players_data = pages_data
-
-        for player in players_data:
-            attr_value = player[attr]
-            try:
-                if attr_value > highest_val:
-                    highest_val = attr_value
-            except TypeError:
-                continue
-        return highest_val
-
-    def feet_to_meters(value):
-        return round(value * float(0.3048), 2)
-
-    def pounds_to_kilos(value):
-        return round(value * float(0.4535924), 2)
-
-    try:
-        click.echo(f"{display_tallest()}\n{display_heaviest()}")
-    except Exception as e:
-        print(e)
-        print("Players not found")
+    print(f"Heaviest player: {heaviest['first_name']} {heaviest['last_name']}"
+          f" {pounds_to_kilos(heaviest['weight'])}")
+    print(f"Tallest player: {tallest['first_name']} {tallest['last_name']}"
+          f" {feet_to_meters(tallest['height'])}")
