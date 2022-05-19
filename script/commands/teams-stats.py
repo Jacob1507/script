@@ -1,8 +1,6 @@
 import click
 import requests
-
-
-from script.core import Command
+from ..core import Command
 
 
 games_api_url = "https://www.balldontlie.io/api/v1/games/"
@@ -32,7 +30,6 @@ class TeamsStats(Command):
     @staticmethod
     def update_team_stats(table, team, list_of_games):
         for game_index in range(1, len(list_of_games)):
-
             game = list_of_games[game_index]
             home_team = game["home_team"]["full_name"]
             visitor_team = game["visitor_team"]["full_name"]
@@ -55,8 +52,8 @@ class TeamsStats(Command):
         season_data = self.season_data()
         all_season_games = []
         for page in season_data:
-            for games in page["data"]:
-                all_season_games.append(games)
+            for game in page["data"]:
+                all_season_games.append(game)
         return all_season_games
 
     def season_data(self):
@@ -101,16 +98,17 @@ class TeamsStats(Command):
 @click.option("--season", prompt="", help="Shows team statistics in given season")
 @click.option("--output", default="stdout", help="display or save output")
 def cli(season, output):
-    ts = TeamsStats(teams_api_url, games_api_url, season)
+    ts_data = TeamsStats(teams_api_url, games_api_url, season).collect_teams_stats()
+    cmd  = Command(ts_data)
 
     if output == "stdout":
-        ts.stdout()
+        cmd.stdout()
 
     if output == "json":
-        ts.data_to_json()
+        cmd.data_to_json()
 
     if output == "csv":
-        ts.data_to_csv()
+        cmd.data_to_csv()
 
     if output == "sqlite":
-        ts.data_do_sqlite()
+        cmd.data_do_sqlite()
