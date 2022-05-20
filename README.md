@@ -39,6 +39,8 @@ Parameters:
 
 * `--output`:
     * `json`  - save data in json format
+    * `csv` - save data in csv format
+    * `sqlite` - save data in sqlite format
 ### group-teams
 ```
 C:\project\script> script group-teams
