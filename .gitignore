@@ -1,5 +1,6 @@
 venv/
 .idea/
+script/commands/__cache__
 script.egg-info/
 *.json
 *.csv
