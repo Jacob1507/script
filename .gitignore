@@ -1,6 +1,7 @@
 venv/
 .idea/
 script.egg-info/
+script/commands/__pycache__/
 *.json
 *.csv
 *.db
